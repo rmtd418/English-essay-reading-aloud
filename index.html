@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Classroom Reading (Pro Icons)</title>
+    <title>Classroom Reading (Collection of 8)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Merriweather:wght@400;700&family=Noto+Serif+SC:wght@400;700&display=swap');
 
         :root {
             --bg-color: #f0f2f5;
             --text-primary: #2c3e50;
-            --highlight-bg: #fff59d; /* 更舒适的阅读高亮色 */
+            --highlight-bg: #fff59d;
             --highlight-text: #000000;
             --accent-color: #2575fc;
             --focus-color: #ff6b6b;
@@ -18,165 +19,509 @@
             --panel-bg: rgba(255, 255, 255, 0.95);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
-        html, body {
-            margin: 0; padding: 0; height: 100%;
-            font-family: 'Roboto', 'Noto Serif SC', sans-serif;
-            background-color: var(--bg-color); color: var(--text-primary);
-            overflow: hidden; user-select: none;
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
         }
 
-        /* 键盘焦点 */
-        .focusable:focus, .switch input:focus + .slider {
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Roboto', 'Noto Serif SC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .focusable:focus,
+        .switch input:focus+.slider {
             box-shadow: 0 0 0 4px var(--focus-color) !important;
             border-color: var(--focus-color) !important;
-            position: relative; z-index: 1000;
+            position: relative;
+            z-index: 1000;
         }
-        
+
         .article-item:focus {
             background-color: #ffecb3 !important;
             border-left: 8px solid var(--focus-color) !important;
             padding-left: 25px;
         }
 
-        /* 主视图 */
         .main-viewport {
-            height: calc(100vh - var(--toolbar-height)); width: 100%;
-            overflow-y: auto; padding: 40px 0; scroll-behavior: smooth;
+            height: calc(100vh - var(--toolbar-height));
+            width: 100%;
+            overflow-y: auto;
+            padding: 40px 0;
+            scroll-behavior: smooth;
         }
-        .article-container { width: 94%; margin: 0 auto; padding-bottom: 250px; }
+
+        .article-container {
+            width: 94%;
+            margin: 0 auto;
+            padding-bottom: 250px;
+        }
 
         h1 {
-            font-family: 'Merriweather', 'Noto Serif SC', serif; text-align: center; color: #1a237e;
-            margin: 20px 0 50px 0; border-bottom: 4px solid #e8eaf6; padding-bottom: 20px; line-height: 1.3;
+            font-family: 'Merriweather', 'Noto Serif SC', serif;
+            text-align: center;
+            color: #1a237e;
+            margin: 20px 0 50px 0;
+            border-bottom: 4px solid #e8eaf6;
+            padding-bottom: 20px;
+            line-height: 1.3;
         }
-        p { line-height: 1.9; margin-bottom: 40px; text-align: justify; color: #37474f; }
 
-        /* 可点击元素 */
-        .playable, .playable-word {
-            cursor: pointer; border-radius: 8px; padding: 4px 6px;
-            transition: background-color 0.15s; border-bottom: 1px dashed transparent;
+        p {
+            line-height: 1.9;
+            margin-bottom: 40px;
+            text-align: justify;
+            color: #37474f;
         }
-        .playable:active, .playable-word:active { background-color: #bbdefb; }
+
+        .playable,
+        .playable-word {
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 4px 6px;
+            transition: background-color 0.15s;
+            border-bottom: 1px dashed transparent;
+        }
+
+        .playable:active,
+        .playable-word:active {
+            background-color: #bbdefb;
+        }
+
         .playing {
-            background-color: var(--highlight-bg); color: var(--highlight-text);
-            border-radius: 10px; padding: 8px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: scale(1.01); transition: all 0.3s;
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+            border-radius: 10px;
+            padding: 8px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: scale(1.01);
+            transition: all 0.3s;
         }
 
-        /* 工具栏 */
         .toolbar {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--toolbar-height);
-            background-color: #ffffff; box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 24px; z-index: 100;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--toolbar-height);
+            background-color: #ffffff;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
         }
 
-        /* 按钮通用样式 - 全新设计 */
         .big-btn {
             height: 80px;
             border: 2px solid transparent;
-            background-color: #f5f6fa; border-radius: 16px; color: #555;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; font-weight: 600; transition: all 0.15s; padding: 0 12px;
-            box-shadow: 0 4px 0 #dfe4ea; margin-left: 8px;
+            background-color: #f5f6fa;
+            border-radius: 16px;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s;
+            padding: 0 12px;
+            box-shadow: 0 4px 0 #dfe4ea;
+            margin-left: 8px;
             min-width: 80px;
         }
-        .big-btn:active { transform: translateY(4px); box-shadow: none; }
-        
-        /* SVG 图标样式 */
+
+        .big-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
         .big-btn svg {
-            width: 28px; height: 28px; margin-bottom: 4px;
-            fill: currentColor; /* 图标颜色跟随文字颜色 */
+            width: 28px;
+            height: 28px;
+            margin-bottom: 4px;
+            fill: currentColor;
         }
 
-        /* 按钮文字 */
-        .btn-text { font-size: 1rem; line-height: 1; }
+        .btn-text {
+            font-size: 1rem;
+            line-height: 1;
+        }
 
-        /* 快捷键提示 */
         .key-hint {
-            font-size: 0.7rem; font-weight: normal; opacity: 0.8; margin-top: 3px;
-            font-family: 'Roboto Mono', monospace; background: rgba(0,0,0,0.1); 
-            padding: 2px 5px; border-radius: 4px; display: inline-block;
+            font-size: 0.7rem;
+            font-weight: normal;
+            opacity: 0.8;
+            margin-top: 3px;
+            font-family: 'Roboto Mono', monospace;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 5px;
+            border-radius: 4px;
+            display: inline-block;
         }
 
-        /* 按钮颜色主题 */
-        .btn-primary { background-color: #4a90e2; color: white; box-shadow: 0 4px 0 #2c6eb5; } /* 目录 */
-        .btn-settings { background-color: #7f8c8d; color: white; box-shadow: 0 4px 0 #586768; } /* 设置 */
-        
-        /* 播放控制组 */
-        .btn-start { background-color: #a4b0be; color: white; box-shadow: 0 4px 0 #7d8a99; } /* 回到开头 */
-        .btn-prev { background-color: #74b9ff; color: white; box-shadow: 0 4px 0 #4fa3f7; } /* 上一句 */
-        .btn-replay { background-color: #feca57; color: #444; box-shadow: 0 4px 0 #dbaf40; } /* 重读 */
-        .btn-next { background-color: #1dd1a1; color: white; box-shadow: 0 4px 0 #10ac84; min-width: 130px; } /* 下一句 */
-        
-        /* 功能组 */
-        .btn-func { background-color: #ffffff; border: 2px solid #eee; color: #57606f; box-shadow: 0 4px 0 #ddd; }
-        .btn-lang { background-color: #a29bfe; color: white; box-shadow: 0 4px 0 #6c5ce7; }
-
-        /* 调整提示文字颜色适应背景 */
-        .btn-primary .key-hint, .btn-start .key-hint, .btn-prev .key-hint, .btn-next .key-hint, .btn-lang .key-hint, .btn-settings .key-hint {
-            background: rgba(255,255,255,0.25); color: white;
+        .btn-primary {
+            background-color: #4a90e2;
+            color: white;
+            box-shadow: 0 4px 0 #2c6eb5;
         }
 
-        .toolbar-left, .toolbar-right { display: flex; align-items: center; }
-        .toolbar-right { gap: 4px; }
+        .btn-settings {
+            background-color: #7f8c8d;
+            color: white;
+            box-shadow: 0 4px 0 #586768;
+        }
 
-        /* 帮助面板 */
+        .btn-start {
+            background-color: #a4b0be;
+            color: white;
+            box-shadow: 0 4px 0 #7d8a99;
+        }
+
+        .btn-prev {
+            background-color: #74b9ff;
+            color: white;
+            box-shadow: 0 4px 0 #4fa3f7;
+        }
+
+        .btn-replay {
+            background-color: #feca57;
+            color: #444;
+            box-shadow: 0 4px 0 #dbaf40;
+        }
+
+        .btn-next {
+            background-color: #1dd1a1;
+            color: white;
+            box-shadow: 0 4px 0 #10ac84;
+            min-width: 130px;
+        }
+
+        .btn-func {
+            background-color: #ffffff;
+            border: 2px solid #eee;
+            color: #57606f;
+            box-shadow: 0 4px 0 #ddd;
+        }
+
+        .btn-lang {
+            background-color: #a29bfe;
+            color: white;
+            box-shadow: 0 4px 0 #6c5ce7;
+        }
+
+        .btn-primary .key-hint,
+        .btn-start .key-hint,
+        .btn-prev .key-hint,
+        .btn-next .key-hint,
+        .btn-lang .key-hint,
+        .btn-settings .key-hint {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
+        .toolbar-left,
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .toolbar-right {
+            gap: 4px;
+        }
+
         .help-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 640px; background: white; padding: 40px; border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2); z-index: 300;
-            display: none; border: 1px solid #f0f0f0;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 640px;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            z-index: 300;
+            display: none;
+            border: 1px solid #f0f0f0;
         }
-        .help-modal.active { display: block; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { from { transform: translate(-50%, -45%) scale(0.95); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 
-        .help-header { font-size: 1.6rem; margin-bottom: 25px; color: var(--text-primary); text-align: center; font-weight: bold; }
-        .help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .help-item { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; padding: 12px 16px; background: #f8f9fa; border-radius: 12px; }
-        .kbd { background: #2d3436; color: white; padding: 3px 10px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 1rem; box-shadow: 0 2px 0 #000; }
+        .help-modal.active {
+            display: block;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        /* 设置面板 */
+        @keyframes popIn {
+            from {
+                transform: translate(-50%, -45%) scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .help-header {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .help-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .kbd {
+            background: #2d3436;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            box-shadow: 0 2px 0 #000;
+        }
+
         .settings-panel {
-            position: fixed; bottom: var(--toolbar-height); right: 20px; width: 480px;
-            background-color: var(--panel-bg); backdrop-filter: blur(15px);
-            border-radius: 24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-            padding: 30px; z-index: 90; transform: translateY(120%);
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid rgba(255,255,255,0.6);
+            position: fixed;
+            bottom: var(--toolbar-height);
+            right: 20px;
+            width: 480px;
+            background-color: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            z-index: 90;
+            transform: translateY(120%);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
-        .settings-panel.open { transform: translateY(-15px); }
-        .setting-row { display: flex; flex-direction: column; margin-bottom: 25px; }
-        .setting-row.focused { background-color: #e3f2fd; border-radius: 12px; padding: 8px; margin: -8px -8px 17px -8px; }
-        .setting-label { font-size: 1.2rem; font-weight: bold; color: #444; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .setting-controls { display: flex; align-items: center; gap: 15px; background: #fff; padding: 6px; border-radius: 12px; border: 1px solid #eee; }
-        .ctrl-btn { width: 60px; height: 50px; font-size: 1.8rem; border-radius: 10px; border: none; background: transparent; cursor: pointer; color: var(--accent-color); }
-        .ctrl-btn:active { background-color: #f0f0f0; }
-        .value-display { font-size: 1.4rem; font-weight: bold; color: #333; min-width: 60px; text-align: center; }
-        select#voice-select { width: 100%; height: 55px; font-size: 1.1rem; padding: 0 15px; border-radius: 12px; border: 1px solid #ddd; background: white; -webkit-appearance: none; }
 
-        .switch { position: relative; display: inline-block; width: 56px; height: 32px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        input:checked + .slider { background-color: var(--accent-color); }
-        input:checked + .slider:before { transform: translateX(24px); }
+        .settings-panel.open {
+            transform: translateY(-15px);
+        }
 
-        /* 侧边栏 */
-        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 199; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(3px); }
-        .sidebar-overlay.active { visibility: visible; opacity: 1; }
-        .sidebar { position: fixed; bottom: 0; left: 0; width: 400px; height: calc(100% - var(--toolbar-height)); background: white; z-index: 200; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; border-radius: 0 20px 0 0; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
-        .sidebar.open { transform: translateX(0); }
-        .sidebar-header { padding: 25px; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; font-size: 1.4rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .article-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
-        .article-item { padding: 20px 25px; border-bottom: 1px solid #f1f1f1; font-size: 1.2rem; font-family: 'Merriweather', 'Noto Serif SC', serif; cursor: pointer; transition: all 0.2s; }
-        .article-item:hover { background-color: #f8f9fa; }
-        .article-item.active { background-color: #e8f0fe; color: #1967d2; border-left: 6px solid #1967d2; font-weight: 600; }
-        
-        .d-none { display: none !important; }
+        .setting-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 25px;
+        }
+
+        .setting-row.focused {
+            background-color: #e3f2fd;
+            border-radius: 12px;
+            padding: 8px;
+            margin: -8px -8px 17px -8px;
+        }
+
+        .setting-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #fff;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        .ctrl-btn {
+            width: 60px;
+            height: 50px;
+            font-size: 1.8rem;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--accent-color);
+        }
+
+        .ctrl-btn:active {
+            background-color: #f0f0f0;
+        }
+
+        .value-display {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        select#voice-select {
+            width: 100%;
+            height: 55px;
+            font-size: 1.1rem;
+            padding: 0 15px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: white;
+            -webkit-appearance: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 32px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 199;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s;
+            backdrop-filter: blur(3px);
+        }
+
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 400px;
+            height: calc(100% - var(--toolbar-height));
+            background: white;
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            border-radius: 0 20px 0 0;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .article-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .article-item {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 1.2rem;
+            font-family: 'Merriweather', 'Noto Serif SC', serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .article-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .article-item.active {
+            background-color: #e8f0fe;
+            color: #1967d2;
+            border-left: 6px solid #1967d2;
+            font-weight: 600;
+        }
+
+        .d-none {
+            display: none !important;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="main-viewport" id="viewport">
@@ -186,78 +531,91 @@
     <div class="toolbar">
         <div class="toolbar-left">
             <button class="big-btn btn-primary focusable" id="btn-menu" tabindex="0" title="打开文章目录">
-                <!-- 目录图标 -->
-                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
+                </svg>
                 <div class="btn-text">目录</div>
                 <span class="key-hint">M</span>
             </button>
         </div>
         <div class="toolbar-right">
-            <!-- 播放控制组 -->
             <button class="big-btn btn-start focusable" id="btn-start" tabindex="0" title="回到开头">
-                <!-- 回到首句图标 -->
-                <svg viewBox="0 0 24 24"><path d="M11 19V5l-7 7 7 7zm11 0V5l-7 7 7 7z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M11 19V5l-7 7 7 7zm11 0V5l-7 7 7 7z" />
+                </svg>
                 <div class="btn-text">首句</div>
                 <span class="key-hint">Home</span>
             </button>
             <button class="big-btn btn-prev focusable" id="btn-prev" tabindex="0" title="上一句">
-                <!-- 上一句图标 -->
-                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                </svg>
                 <div class="btn-text">上句</div>
                 <span class="key-hint">Bksp</span>
             </button>
             <button class="big-btn btn-replay focusable" id="btn-replay" tabindex="0" title="重读当前句">
-                <!-- 重读图标 -->
-                <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
+                </svg>
                 <div class="btn-text">重读</div>
                 <span class="key-hint">R</span>
             </button>
             <button class="big-btn btn-next focusable" id="btn-next" tabindex="0" title="播放下一句">
-                <!-- 下一句图标 -->
-                <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
                 <div class="btn-text">下一句</div>
                 <span class="key-hint">Space</span>
             </button>
-            
-            <div style="width:8px;"></div> <!-- 分隔 -->
 
-            <!-- 功能区 -->
+            <div style="width:8px;"></div>
+
             <button class="big-btn btn-lang focusable" id="btn-lang" tabindex="0" title="切换中英文">
-                <!-- 语言图标 -->
-                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" />
+                </svg>
                 <div class="btn-text">中/英</div>
                 <span class="key-hint">Z</span>
             </button>
 
             <button class="big-btn btn-func focusable" id="btn-mode" tabindex="0" title="切换句子/单词模式">
-                <!-- 模式图标 -->
-                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                </svg>
                 <div class="btn-text">模式</div>
                 <span class="key-hint">X</span>
             </button>
 
             <button class="big-btn btn-func focusable" id="btn-hide" tabindex="0" title="显示/隐藏课文">
-                <!-- 显隐图标 -->
-                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                </svg>
                 <div class="btn-text">显隐</div>
                 <span class="key-hint">C</span>
             </button>
-            
+
             <button class="big-btn btn-settings focusable" id="btn-settings" tabindex="0" title="设置">
-                <!-- 设置图标 -->
-                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L4.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L4.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                </svg>
                 <div class="btn-text">设置</div>
                 <span class="key-hint">Esc</span>
             </button>
         </div>
     </div>
 
-    <!-- 快捷键帮助面板 -->
+    <!-- 快捷键帮助 -->
     <div class="sidebar-overlay" id="help-overlay"></div>
     <div class="help-modal" id="help-modal">
         <div class="help-header">
             <span>⌨️ 键盘快捷键指南</span>
-            <button style="background:none;border:none;font-size:1.5rem;cursor:pointer;" onclick="toggleHelp()">×</button>
+            <button style="background:none;border:none;font-size:1.5rem;cursor:pointer;"
+                onclick="toggleHelp()">×</button>
         </div>
         <div class="help-grid">
             <div class="help-item"><span>播放下一句</span><span class="kbd">空格 / Enter</span></div>
@@ -283,7 +641,8 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <div style="font-size:0.9rem; color:#777;">按 <span class="kbd" style="font-size:0.9rem">P</span> 查看所有快捷键</div>
+            <div style="font-size:0.9rem; color:#777;">按 <span class="kbd" style="font-size:0.9rem">P</span> 查看所有快捷键
+            </div>
         </div>
         <div class="setting-row">
             <div class="setting-label">🗣️ 朗读声音 (Voice)</div>
@@ -307,19 +666,21 @@
         </div>
     </div>
 
+    <!-- 侧边栏 -->
     <div class="sidebar-overlay" id="overlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span>📚 文章列表</span>
-            <button style="background:none;border:none;color:white;font-size:2rem;" id="btn-close-sidebar" class="focusable" tabindex="0">×</button>
+            <button style="background:none;border:none;color:white;font-size:2rem;" id="btn-close-sidebar"
+                class="focusable" tabindex="0">×</button>
         </div>
         <ul class="article-list" id="article-list"></ul>
     </div>
 
     <script>
-        // --- DATA ---
+        // --- 文章数据 ---
         const articles = [
-             {
+            {
                 id: 1,
                 titleEn: "An Introduction to Yuan Longping",
                 titleCn: "袁隆平简介",
@@ -337,7 +698,7 @@
                 id: 3,
                 titleEn: "An Introduction to Qian Xuesen",
                 titleCn: "钱学森简介",
-                contentEn: `<p class="s-box"><span class="p">Qian Xuesen was born in Shanghai</span> <span class="p">in 1911.</span> <span class="p">After studying in China,</span> <span class="p">he went to the United States,</span> <span class="p">where he became a rocket technology expert.</span> <span class="p">He returned to China</span> <span class="p">in 1955 and led the development of</span> <span class="p">China’s rocket, missile, and space programs.</span></p><p class="s-box"><span class="p">Despite limited resources,</span> <span class="p">he succeeded in developing</span> <span class="p">China's first rockets and satellites.</span> <span class="p">Under his leadership,</span> <span class="p">China launched its first satellite</span> <span class="p">in 1970. His research</span> <span class="p">also contributed to</span> <span class="p">the Shenzhou rockets.</span></p><p class="s-box"><span class="p">In 2009,</span> <span class="p">the whole country was sadden</span> <span class="p">by Qian’s death.</span></p><p class="s-box"><span class="p">Qian Xuesen is a patriotic and knowlegeable person</span> <span class="p">whom Chinese love and respect.</span> <span class="p">He is honored as</span> <span class="p">"the father of China's aerospace"</span> <span class="p">for his great contributions.</span> <span class="p">His deeds</span> <span class="p">set a brilliant example</span> <span class="p">for future genergations.</span></p>`,
+                contentEn: `<p class="s-box"><span class="p">Qian Xuesen was born in Shanghai</span> <span class="p">in 1911.</span> <span class="p">After studying in China,</span> <span class="p">he went to the United States,</span> <span class="p">where he became a rocket technology expert.</span> <span class="p">He returned to China</span> <span class="p">in 1955 and led the development of</span> <span class="p">China’s rocket, missile, and space programs.</span></p><p class="s-box"><span class="p">Despite limited resources,</span> <span class="p">he succeeded in developing</span> <span class="p">China's first rockets and satellites.</span> <span class="p">Under his leadership,</span> <span class="p">China launched its first satellite</span> <span class="p">in 1970.</span><span class="p"> His research</span> <span class="p">also contributed to</span> <span class="p">the Shenzhou rockets.</span></p><p class="s-box"><span class="p">In 2009,</span> <span class="p">the whole country was sadden</span> <span class="p">by Qian’s death.</span></p><p class="s-box"><span class="p">Qian Xuesen is a patriotic and knowlegeable person</span> <span class="p">whom Chinese love and respect.</span> <span class="p">He is honored as</span> <span class="p">"the father of China's aerospace"</span> <span class="p">for his great contributions.</span> <span class="p">His deeds</span> <span class="p">set a brilliant example</span> <span class="p">for future genergations.</span></p>`,
                 contentCn: `<p class="s-box"><span class="p">钱学森出生于上海</span> <span class="p">在1911年。</span> <span class="p">在中国求学后，</span> <span class="p">他去了美国，</span> <span class="p">在那里他成为了一名火箭技术专家。</span> <span class="p">他回到了中国</span> <span class="p">在1955年，并领导了</span> <span class="p">中国的火箭、导弹和太空计划的发展。</span></p><p class="s-box"><span class="p">尽管资源有限，</span> <span class="p">他成功地研制出了</span> <span class="p">中国的第一批火箭和卫星。</span> <span class="p">在他的领导下，</span> <span class="p">中国发射了第一颗卫星</span> <span class="p">在1970年。他的研究</span> <span class="p">也为</span> <span class="p">神舟系列火箭做出了贡献。</span></p><p class="s-box"><span class="p">在2009年，</span> <span class="p">举国悲痛</span> <span class="p">因钱学森的逝世。</span></p><p class="s-box"><span class="p">钱学森是一位爱国且知识渊博的人，</span> <span class="p">深受中国人的爱戴和尊敬。</span> <span class="p">他被誉为</span> <span class="p">“中国航天之父”</span> <span class="p">因为他的巨大贡献。</span> <span class="p">他的事迹</span> <span class="p">树立了光辉的榜样</span> <span class="p">为后代。</span></p>`
             },
             {
@@ -360,6 +721,20 @@
                 titleCn: "生活中的肢体语言",
                 contentEn: `<p class="s-box"><span class="p">Body language plays a vital role</span> <span class="p">in our daily interactions</span> <span class="p">and varies from culture to culture.</span> <span class="p">For example,</span> <span class="p">in many Middle Eastern countries,</span> <span class="p">eye contact isn't approved.</span> <span class="p">In Japan,</span> <span class="p">people interpret the "ok" gesture as money.</span> <span class="p">In France,</span> <span class="p">it means zero.</span> <span class="p">In Brazil and Germany,</span> <span class="p">it is impolite.</span> <span class="p">By contrast,</span> <span class="p">a smile can break down barriers everywhere.</span> <span class="p">In our life,</span> <span class="p">we can make inferences from people's body language.</span> <span class="p">When someone straightens up,</span> <span class="p">they show confidence.</span> <span class="p">When someone slumps,</span> <span class="p">it may imply they are tired or sad.</span> <span class="p">Even a slight movement</span> <span class="p">can reveal their feelings.</span> <span class="p">Ultimately,</span> <span class="p">it's important to use appropriate body language</span> <span class="p">in different situations, which helps us avoid conflict</span> <span class="p">and communicate better with others.</span></p>`,
                 contentCn: `<p class="s-box"><span class="p">肢体语言起着至关重要的作用</span> <span class="p">在我们的日常交往中，</span> <span class="p">并且因文化而异。</span> <span class="p">例如，</span> <span class="p">在许多中东国家，</span> <span class="p">眼神接触是不被认可的。</span> <span class="p">在日本，</span> <span class="p">人们把“OK”手势理解为钱。</span> <span class="p">在法国，</span> <span class="p">它意味着零。</span> <span class="p">在巴西和德国，</span> <span class="p">这是不礼貌的。</span> <span class="p">相比之下，</span> <span class="p">微笑可以在任何地方打破隔阂。</span> <span class="p">在我们的生活中，</span> <span class="p">我们可以从人们的肢体语言中做出推断。</span> <span class="p">当某人挺直腰板时，</span> <span class="p">他们表现出自信。</span> <span class="p">当某人无精打采时，</span> <span class="p">这可能意味着他们累了或伤心。</span> <span class="p">即使是轻微的动作</span> <span class="p">也能流露他们的感情。</span> <span class="p">最终，</span> <span class="p">使用得体的肢体语言很重要</span> <span class="p">在不同的场合，这有助于我们避免冲突</span> <span class="p">并更好地与他人交流。</span></p>`
+            },
+            {
+                id: 7,
+                titleEn: "Studying Abroad",
+                titleCn: "出国留学",
+                contentEn: `<p class="s-box"><span class="p">I'm more than delighted</span> <span class="p">to share my opinion.</span> <span class="p">Frankly speaking,</span> <span class="p">I think studying abroad</span> <span class="p">is beneficial</span> <span class="p">for students.</span> <span class="p">The reasons are as follows.</span></p><p class="s-box"><span class="p">To begin with,</span> <span class="p">living in new surroundings</span> <span class="p">helps students</span> <span class="p">gain new perspectives</span> <span class="p">and become more mature.</span> <span class="p">Moreover,</span> <span class="p">by choosing to</span> <span class="p">participate in activities</span> <span class="p">and cooperate with peers,</span> <span class="p">students can strengthen</span> <span class="p">their cultural understanding</span> <span class="p">and become more competent.</span></p><p class="s-box"><span class="p">In short,</span> <span class="p">although students may face</span> <span class="p">culture shock</span> <span class="p">and homesickness</span> <span class="p">after leaving their comfort zone,</span> <span class="p">the experience</span> <span class="p">brings tremendous benefits</span> <span class="p">for personal growth.</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">我非常高兴</span> <span class="p">分享我的观点。</span> <span class="p">坦白地说，</span> <span class="p">我认为出国留学</span> <span class="p">是有益的</span> <span class="p">对学生来说。</span> <span class="p">原因如下。</span></p><p class="s-box"><span class="p">首先，</span> <span class="p">生活在新的环境中</span> <span class="p">帮助学生</span> <span class="p">获得新的视角</span> <span class="p">并变得更加成熟。</span> <span class="p">此外，</span> <span class="p">通过选择</span> <span class="p">参加活动</span> <span class="p">并同龄人合作，</span> <span class="p">学生可以加强</span> <span class="p">他们的文化理解</span> <span class="p">并变得更有能力。</span></p><p class="s-box"><span class="p">总之，</span> <span class="p">虽然学生可能会面临</span> <span class="p">文化冲击</span> <span class="p">和思乡之情</span> <span class="p">在离开舒适区后，</span> <span class="p">这段经历</span> <span class="p">带来巨大的好处</span> <span class="p">对于个人成长。</span></p>`
+            },
+            {
+                id: 8,
+                titleEn: "Healthy Eating",
+                titleCn: "健康饮食",
+                contentEn: `<p class="s-box"><span class="p">There is no doubt that</span> <span class="p">health is more vital than wealth.</span> <span class="p">So</span> <span class="p">developing a healthy eating habit</span> <span class="p">is fundamental.</span></p><p class="s-box"><span class="p">You should try to</span> <span class="p">eat less junk food</span> <span class="p">——like sausage</span> <span class="p">and bacon.</span> <span class="p">It is good</span> <span class="p">to consume more vegetables,</span> <span class="p">such as cabbage and onion,</span> <span class="p">and fruits.</span> <span class="p">It is also important</span> <span class="p">to eat foods</span> <span class="p">rich in vitamins and fibre,</span> <span class="p">like tofu.</span> <span class="p">Remember to eat in moderation</span> <span class="p">and chew your food well.</span></p><p class="s-box"><span class="p">These small changes</span> <span class="p">can help you</span> <span class="p">feel better</span> <span class="p">and keep a good temper.</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">毫无疑问</span> <span class="p">健康比财富更重要。</span> <span class="p">所以</span> <span class="p">养成健康的饮食习惯</span> <span class="p">是根本。</span></p><p class="s-box"><span class="p">你应该尝试</span> <span class="p">少吃垃圾食品</span> <span class="p">——比如香肠</span> <span class="p">和培根。</span> <span class="p">这很好</span> <span class="p">多吃蔬菜，</span> <span class="p">比如卷心菜和洋葱，</span> <span class="p">和水果。</span> <span class="p">同样重要的是</span> <span class="p">吃那些食物</span> <span class="p">富含维生素和纤维的，</span> <span class="p">比如豆腐。</span> <span class="p">记得适量饮食</span> <span class="p">并且细嚼慢咽。</span></p><p class="s-box"><span class="p">这些小小的改变</span> <span class="p">可以帮助你</span> <span class="p">感觉更好</span> <span class="p">并保持好脾气。</span></p>`
             }
         ];
 
@@ -398,7 +773,7 @@
             const voices = synth.getVoices(); els.voiceSelect.innerHTML = '';
             const targetLang = state.lang === 'en' ? 'en' : 'zh';
             voices.forEach(voice => {
-                if(voice.lang.toLowerCase().includes(targetLang)) {
+                if (voice.lang.toLowerCase().includes(targetLang)) {
                     const option = document.createElement('option');
                     option.textContent = `${voice.name} (${voice.lang})`; option.value = voice.name;
                     els.voiceSelect.appendChild(option);
@@ -408,7 +783,7 @@
             if (savedVoice && Array.from(els.voiceSelect.options).some(o => o.value === savedVoice)) {
                 els.voiceSelect.value = savedVoice;
             } else {
-                const preferred = state.lang === 'en' 
+                const preferred = state.lang === 'en'
                     ? ["Microsoft Libby", "Microsoft Zira", "Google US English"]
                     : ["Microsoft Xiaoxiao", "Microsoft Huihui", "Google Putonghua"];
                 for (let p of preferred) {
@@ -438,24 +813,30 @@
             const title = state.lang === 'en' ? article.titleEn : article.titleCn;
             const content = state.lang === 'en' ? article.contentEn : article.contentCn;
             els.content.innerHTML = `<h1>${title}</h1>` + content;
-            
+
             const isCn = state.lang === 'cn';
-            // 中文模式隐藏 模式/显隐 按钮
+            els.btnLang.innerHTML = state.lang === 'en' ? `<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg><div class="btn-text">中/英</div><span class="key-hint">Z</span>` : `<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg><div class="btn-text">英/中</div><span class="key-hint">Z</span>`;
+
             if (isCn) {
                 els.btnHide.classList.add('d-none');
                 els.btnMode.classList.add('d-none');
             } else {
                 els.btnHide.classList.remove('d-none');
                 els.btnMode.classList.remove('d-none');
+                els.btnMode.innerHTML = state.mode === 'sentence' ? `<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg><div class="btn-text">模式</div><span class="key-hint">X</span>` : `<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg><div class="btn-text">模式</div><span class="key-hint">X</span>`;
             }
-            
+
             bindClickEvents(); updateStyles();
             if (state.lastPlayedIndex !== -1) {
                 setTimeout(() => {
                     const items = getPlayableItems();
-                    if (items[state.lastPlayedIndex]) items[state.lastPlayedIndex].scrollIntoView({ behavior: "auto", block: "center" });
+                    if (items[state.lastPlayedIndex]) {
+                        items[state.lastPlayedIndex].classList.add('playing');
+                        items[state.lastPlayedIndex].scrollIntoView({ behavior: "auto", block: "center" });
+                        setTimeout(() => items[state.lastPlayedIndex].classList.remove('playing'), 500);
+                    }
                 }, 100);
-            } else els.viewport.scrollTo(0,0);
+            } else els.viewport.scrollTo(0, 0);
             saveSettings();
         }
 
@@ -464,14 +845,14 @@
             const title = state.lang === 'en' ? article.titleEn : article.titleCn;
             const content = state.lang === 'en' ? article.contentEn : article.contentCn;
             els.content.innerHTML = `<h1>${title}</h1>` + content;
-            
-            if(state.mode === 'sentence' || state.lang === 'cn') {
+
+            if (state.mode === 'sentence' || state.lang === 'cn') {
                 Array.from(els.content.querySelectorAll('.p')).forEach((span, index) => {
                     span.className = 'playable';
                     span.onclick = (e) => { e.stopPropagation(); state.lastPlayedIndex = index; playText(span); };
                 });
             } else {
-                 els.content.querySelectorAll('.p').forEach(span => {
+                els.content.querySelectorAll('.p').forEach(span => {
                     const text = span.textContent;
                     const words = text.match(/[\w'-]+|[.,!?;"]/g) || [];
                     span.innerHTML = words.map(w => /[\w'-]+/.test(w) ? `<span class="playable-word">${w}</span>` : w).join(' ');
@@ -484,7 +865,7 @@
             updateStyles();
         }
 
-        function getPlayableItems() { return Array.from(els.content.querySelectorAll('.playable, .playable-word')); }
+        function getPlayableItems() { return Array.from(els.content.querySelectorAll(state.mode === 'sentence' || state.lang === 'cn' ? '.playable' : '.playable-word')); }
         function playNext() {
             const all = getPlayableItems(); if (all.length === 0) return;
             let next = state.lastPlayedIndex + 1; if (next >= all.length) next = 0;
@@ -521,14 +902,14 @@
 
         function stopSpeech() { if (synth.speaking) synth.cancel(); }
         function toggleLang() { state.switchingLang = true; state.lang = state.lang === 'en' ? 'cn' : 'en'; populateVoiceList(); loadArticle(state.currentArticleId); }
-        function toggleHelp() { 
+        function toggleHelp() {
             const isActive = els.helpModal.classList.contains('active');
-            if(isActive) { els.helpModal.classList.remove('active'); els.helpOverlay.classList.remove('active'); }
+            if (isActive) { els.helpModal.classList.remove('active'); els.helpOverlay.classList.remove('active'); }
             else { els.helpModal.classList.add('active'); els.helpOverlay.classList.add('active'); }
         }
 
         function updateStyles() {
-            const h1 = els.content.querySelector('h1'); if(h1) h1.style.fontSize = (state.fontSize * 1.2) + 'px';
+            const h1 = els.content.querySelector('h1'); if (h1) h1.style.fontSize = (state.fontSize * 1.2) + 'px';
             els.content.querySelectorAll('p').forEach(p => p.style.fontSize = state.fontSize + 'px');
             els.dispSize.textContent = state.fontSize; els.dispSpeed.textContent = state.speed.toFixed(1);
         }
@@ -543,21 +924,22 @@
             state.fontSize = newSize; updateStyles(); saveSettings();
         }
         function toggleMode() {
-            if(state.lang === 'cn') return;
+            if (state.lang === 'cn') return;
             state.mode = state.mode === 'sentence' ? 'word' : 'sentence';
             state.lastPlayedIndex = -1; bindClickEvents();
+            els.btnMode.innerHTML = state.mode === 'sentence' ? `<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg><div class="btn-text">模式</div><span class="key-hint">X</span>` : `<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg><div class="btn-text">模式</div><span class="key-hint">X</span>`;
         }
         function toggleHide() {
-            if(state.lang === 'cn') return;
+            if (state.lang === 'cn') return;
             const children = els.content.children;
             let isHidden = children.length > 1 ? children[1].style.visibility === 'hidden' : false;
-            for(let i=1; i<children.length; i++) children[i].style.visibility = isHidden ? 'visible' : 'hidden';
+            for (let i = 1; i < children.length; i++) children[i].style.visibility = isHidden ? 'visible' : 'hidden';
         }
         function toggleSidebar(show) {
             if (show) {
                 els.sidebar.classList.add('open'); els.overlay.classList.add('active');
                 els.settingsPanel.classList.remove('open'); state.sidebarOpen = true; state.settingsOpen = false;
-                setTimeout(() => { const first = els.articleList.querySelector('.article-item'); if(first) first.focus(); }, 100);
+                setTimeout(() => { const first = els.articleList.querySelector('.article-item'); if (first) first.focus(); }, 100);
             } else {
                 els.sidebar.classList.remove('open'); els.overlay.classList.remove('active');
                 state.sidebarOpen = false; els.btnMenu.focus();
@@ -573,31 +955,31 @@
         function highlightSettingsRow() {
             document.querySelectorAll('.setting-row').forEach(r => r.classList.remove('focused'));
             const rows = document.querySelectorAll('.setting-row');
-            if(rows[state.settingsFocusIndex]) {
+            if (rows[state.settingsFocusIndex]) {
                 rows[state.settingsFocusIndex].classList.add('focused');
                 const interactive = els.settingRows[state.settingsFocusIndex];
-                if(interactive && typeof interactive !== 'string') interactive.focus();
+                if (interactive && typeof interactive !== 'string') interactive.focus();
             }
         }
 
         document.addEventListener('keydown', (e) => {
             if (!state.keyboardEnabled) return;
 
-            if(e.key === 'p' || e.key === 'P') { e.preventDefault(); toggleHelp(); return; }
+            if (e.key === 'p' || e.key === 'P') { e.preventDefault(); toggleHelp(); return; }
 
             if (state.sidebarOpen) {
                 const items = Array.from(document.querySelectorAll('.article-item'));
                 const current = document.activeElement; const currentIndex = items.indexOf(current);
-                if (e.key === 'ArrowDown') { e.preventDefault(); const next = (currentIndex + 1) % items.length; items[next].focus(); } 
-                else if (e.key === 'ArrowUp') { e.preventDefault(); const prev = (currentIndex - 1 + items.length) % items.length; items[prev].focus(); } 
-                else if (e.key === 'Enter') { if (currentIndex !== -1) items[currentIndex].click(); } 
+                if (e.key === 'ArrowDown') { e.preventDefault(); const next = (currentIndex + 1) % items.length; items[next].focus(); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); const prev = (currentIndex - 1 + items.length) % items.length; items[prev].focus(); }
+                else if (e.key === 'Enter') { if (currentIndex !== -1) items[currentIndex].click(); }
                 else if (e.key === 'Escape' || e.key === 'ArrowRight') { toggleSidebar(false); }
                 return;
             }
             if (state.settingsOpen) {
                 if (e.key === 'Escape') { toggleSettings(); return; }
-                if (e.key === 'ArrowDown') { e.preventDefault(); state.settingsFocusIndex = (state.settingsFocusIndex + 1) % 4; highlightSettingsRow(); } 
-                else if (e.key === 'ArrowUp') { e.preventDefault(); state.settingsFocusIndex = (state.settingsFocusIndex - 1 + 4) % 4; highlightSettingsRow(); } 
+                if (e.key === 'ArrowDown') { e.preventDefault(); state.settingsFocusIndex = (state.settingsFocusIndex + 1) % 4; highlightSettingsRow(); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); state.settingsFocusIndex = (state.settingsFocusIndex - 1 + 4) % 4; highlightSettingsRow(); }
                 else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                     const currentItem = els.settingRows[state.settingsFocusIndex];
                     const delta = e.key === 'ArrowRight' ? 1 : -1;
@@ -608,7 +990,7 @@
                 return;
             }
             if (e.key === 'Escape') { toggleSettings(); return; }
-            
+
             if (e.key === ' ' && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); playNext(); }
             else if (e.key === 'Backspace') { e.preventDefault(); playPrev(); }
             else if (e.key === 'Home') { e.preventDefault(); playStart(); }
@@ -639,11 +1021,11 @@
             else localStorage.setItem('cr_voice_cn', els.voiceSelect.value);
         }
         function loadSettings() {
-            const s_speed = localStorage.getItem('cr_speed'); if(s_speed) state.speed = parseFloat(s_speed);
-            const s_size = localStorage.getItem('cr_size'); if(s_size) state.fontSize = parseInt(s_size);
-            const s_article = localStorage.getItem('cr_article'); if(s_article) state.currentArticleId = parseInt(s_article);
-            const s_kb = localStorage.getItem('cr_kb'); if(s_kb !== null) state.keyboardEnabled = (s_kb === 'true');
-            const s_lang = localStorage.getItem('cr_lang'); if(s_lang) state.lang = s_lang;
+            const s_speed = localStorage.getItem('cr_speed'); if (s_speed) state.speed = parseFloat(s_speed);
+            const s_size = localStorage.getItem('cr_size'); if (s_size) state.fontSize = parseInt(s_size);
+            const s_article = localStorage.getItem('cr_article'); if (s_article) state.currentArticleId = parseInt(s_article);
+            const s_kb = localStorage.getItem('cr_kb'); if (s_kb !== null) state.keyboardEnabled = (s_kb === 'true');
+            const s_lang = localStorage.getItem('cr_lang'); if (s_lang) state.lang = s_lang;
             state.voiceEn = localStorage.getItem('cr_voice_en'); state.voiceCn = localStorage.getItem('cr_voice_cn');
         }
 
@@ -665,10 +1047,11 @@
 
         els.voiceSelect.onchange = () => { if (state.lang === 'en') state.voiceEn = els.voiceSelect.value; else state.voiceCn = els.voiceSelect.value; saveSettings(); };
         els.checkKeyboard.onchange = (e) => { state.keyboardEnabled = e.target.checked; saveSettings(); };
-        els.viewport.onclick = () => { if(state.settingsOpen) toggleSettings(); };
+        els.viewport.onclick = () => { if (state.settingsOpen) toggleSettings(); };
         els.helpOverlay.onclick = toggleHelp;
 
         init();
     </script>
 </body>
+
 </html>
