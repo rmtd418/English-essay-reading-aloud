@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Classroom Reading (Pro Icons)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Merriweather:wght@400;700&family=Noto+Serif+SC:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #f0f2f5;
+            --text-primary: #2c3e50;
+            --highlight-bg: #fff59d; /* 更舒适的阅读高亮色 */
+            --highlight-text: #000000;
+            --accent-color: #2575fc;
+            --focus-color: #ff6b6b;
+            --toolbar-height: 120px;
+            --panel-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        html, body {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Roboto', 'Noto Serif SC', sans-serif;
+            background-color: var(--bg-color); color: var(--text-primary);
+            overflow: hidden; user-select: none;
+        }
+
+        /* 键盘焦点 */
+        .focusable:focus, .switch input:focus + .slider {
+            box-shadow: 0 0 0 4px var(--focus-color) !important;
+            border-color: var(--focus-color) !important;
+            position: relative; z-index: 1000;
+        }
+        
+        .article-item:focus {
+            background-color: #ffecb3 !important;
+            border-left: 8px solid var(--focus-color) !important;
+            padding-left: 25px;
+        }
+
+        /* 主视图 */
+        .main-viewport {
+            height: calc(100vh - var(--toolbar-height)); width: 100%;
+            overflow-y: auto; padding: 40px 0; scroll-behavior: smooth;
+        }
+        .article-container { width: 94%; margin: 0 auto; padding-bottom: 250px; }
+
+        h1 {
+            font-family: 'Merriweather', 'Noto Serif SC', serif; text-align: center; color: #1a237e;
+            margin: 20px 0 50px 0; border-bottom: 4px solid #e8eaf6; padding-bottom: 20px; line-height: 1.3;
+        }
+        p { line-height: 1.9; margin-bottom: 40px; text-align: justify; color: #37474f; }
+
+        /* 可点击元素 */
+        .playable, .playable-word {
+            cursor: pointer; border-radius: 8px; padding: 4px 6px;
+            transition: background-color 0.15s; border-bottom: 1px dashed transparent;
+        }
+        .playable:active, .playable-word:active { background-color: #bbdefb; }
+        .playing {
+            background-color: var(--highlight-bg); color: var(--highlight-text);
+            border-radius: 10px; padding: 8px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: scale(1.01); transition: all 0.3s;
+        }
+
+        /* 工具栏 */
+        .toolbar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--toolbar-height);
+            background-color: #ffffff; box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 24px; z-index: 100;
+        }
+
+        /* 按钮通用样式 - 全新设计 */
+        .big-btn {
+            height: 80px;
+            border: 2px solid transparent;
+            background-color: #f5f6fa; border-radius: 16px; color: #555;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; transition: all 0.15s; padding: 0 12px;
+            box-shadow: 0 4px 0 #dfe4ea; margin-left: 8px;
+            min-width: 80px;
+        }
+        .big-btn:active { transform: translateY(4px); box-shadow: none; }
+        
+        /* SVG 图标样式 */
+        .big-btn svg {
+            width: 28px; height: 28px; margin-bottom: 4px;
+            fill: currentColor; /* 图标颜色跟随文字颜色 */
+        }
+
+        /* 按钮文字 */
+        .btn-text { font-size: 1rem; line-height: 1; }
+
+        /* 快捷键提示 */
+        .key-hint {
+            font-size: 0.7rem; font-weight: normal; opacity: 0.8; margin-top: 3px;
+            font-family: 'Roboto Mono', monospace; background: rgba(0,0,0,0.1); 
+            padding: 2px 5px; border-radius: 4px; display: inline-block;
+        }
+
+        /* 按钮颜色主题 */
+        .btn-primary { background-color: #4a90e2; color: white; box-shadow: 0 4px 0 #2c6eb5; } /* 目录 */
+        .btn-settings { background-color: #7f8c8d; color: white; box-shadow: 0 4px 0 #586768; } /* 设置 */
+        
+        /* 播放控制组 */
+        .btn-start { background-color: #a4b0be; color: white; box-shadow: 0 4px 0 #7d8a99; } /* 回到开头 */
+        .btn-prev { background-color: #74b9ff; color: white; box-shadow: 0 4px 0 #4fa3f7; } /* 上一句 */
+        .btn-replay { background-color: #feca57; color: #444; box-shadow: 0 4px 0 #dbaf40; } /* 重读 */
+        .btn-next { background-color: #1dd1a1; color: white; box-shadow: 0 4px 0 #10ac84; min-width: 130px; } /* 下一句 */
+        
+        /* 功能组 */
+        .btn-func { background-color: #ffffff; border: 2px solid #eee; color: #57606f; box-shadow: 0 4px 0 #ddd; }
+        .btn-lang { background-color: #a29bfe; color: white; box-shadow: 0 4px 0 #6c5ce7; }
+
+        /* 调整提示文字颜色适应背景 */
+        .btn-primary .key-hint, .btn-start .key-hint, .btn-prev .key-hint, .btn-next .key-hint, .btn-lang .key-hint, .btn-settings .key-hint {
+            background: rgba(255,255,255,0.25); color: white;
+        }
+
+        .toolbar-left, .toolbar-right { display: flex; align-items: center; }
+        .toolbar-right { gap: 4px; }
+
+        /* 帮助面板 */
+        .help-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 640px; background: white; padding: 40px; border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); z-index: 300;
+            display: none; border: 1px solid #f0f0f0;
+        }
+        .help-modal.active { display: block; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: translate(-50%, -45%) scale(0.95); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+        .help-header { font-size: 1.6rem; margin-bottom: 25px; color: var(--text-primary); text-align: center; font-weight: bold; }
+        .help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .help-item { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; padding: 12px 16px; background: #f8f9fa; border-radius: 12px; }
+        .kbd { background: #2d3436; color: white; padding: 3px 10px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 1rem; box-shadow: 0 2px 0 #000; }
+
+        /* 设置面板 */
+        .settings-panel {
+            position: fixed; bottom: var(--toolbar-height); right: 20px; width: 480px;
+            background-color: var(--panel-bg); backdrop-filter: blur(15px);
+            border-radius: 24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+            padding: 30px; z-index: 90; transform: translateY(120%);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid rgba(255,255,255,0.6);
+        }
+        .settings-panel.open { transform: translateY(-15px); }
+        .setting-row { display: flex; flex-direction: column; margin-bottom: 25px; }
+        .setting-row.focused { background-color: #e3f2fd; border-radius: 12px; padding: 8px; margin: -8px -8px 17px -8px; }
+        .setting-label { font-size: 1.2rem; font-weight: bold; color: #444; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .setting-controls { display: flex; align-items: center; gap: 15px; background: #fff; padding: 6px; border-radius: 12px; border: 1px solid #eee; }
+        .ctrl-btn { width: 60px; height: 50px; font-size: 1.8rem; border-radius: 10px; border: none; background: transparent; cursor: pointer; color: var(--accent-color); }
+        .ctrl-btn:active { background-color: #f0f0f0; }
+        .value-display { font-size: 1.4rem; font-weight: bold; color: #333; min-width: 60px; text-align: center; }
+        select#voice-select { width: 100%; height: 55px; font-size: 1.1rem; padding: 0 15px; border-radius: 12px; border: 1px solid #ddd; background: white; -webkit-appearance: none; }
+
+        .switch { position: relative; display: inline-block; width: 56px; height: 32px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* 侧边栏 */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 199; visibility: hidden; opacity: 0; transition: all 0.3s; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { visibility: visible; opacity: 1; }
+        .sidebar { position: fixed; bottom: 0; left: 0; width: 400px; height: calc(100% - var(--toolbar-height)); background: white; z-index: 200; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; border-radius: 0 20px 0 0; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { padding: 25px; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; font-size: 1.4rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .article-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
+        .article-item { padding: 20px 25px; border-bottom: 1px solid #f1f1f1; font-size: 1.2rem; font-family: 'Merriweather', 'Noto Serif SC', serif; cursor: pointer; transition: all 0.2s; }
+        .article-item:hover { background-color: #f8f9fa; }
+        .article-item.active { background-color: #e8f0fe; color: #1967d2; border-left: 6px solid #1967d2; font-weight: 600; }
+        
+        .d-none { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="main-viewport" id="viewport">
+        <div class="article-container" id="content-area"></div>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="big-btn btn-primary focusable" id="btn-menu" tabindex="0" title="打开文章目录">
+                <!-- 目录图标 -->
+                <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                <div class="btn-text">目录</div>
+                <span class="key-hint">M</span>
+            </button>
+        </div>
+        <div class="toolbar-right">
+            <!-- 播放控制组 -->
+            <button class="big-btn btn-start focusable" id="btn-start" tabindex="0" title="回到开头">
+                <!-- 回到首句图标 -->
+                <svg viewBox="0 0 24 24"><path d="M11 19V5l-7 7 7 7zm11 0V5l-7 7 7 7z"/></svg>
+                <div class="btn-text">首句</div>
+                <span class="key-hint">Home</span>
+            </button>
+            <button class="big-btn btn-prev focusable" id="btn-prev" tabindex="0" title="上一句">
+                <!-- 上一句图标 -->
+                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                <div class="btn-text">上句</div>
+                <span class="key-hint">Bksp</span>
+            </button>
+            <button class="big-btn btn-replay focusable" id="btn-replay" tabindex="0" title="重读当前句">
+                <!-- 重读图标 -->
+                <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                <div class="btn-text">重读</div>
+                <span class="key-hint">R</span>
+            </button>
+            <button class="big-btn btn-next focusable" id="btn-next" tabindex="0" title="播放下一句">
+                <!-- 下一句图标 -->
+                <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                <div class="btn-text">下一句</div>
+                <span class="key-hint">Space</span>
+            </button>
+            
+            <div style="width:8px;"></div> <!-- 分隔 -->
+
+            <!-- 功能区 -->
+            <button class="big-btn btn-lang focusable" id="btn-lang" tabindex="0" title="切换中英文">
+                <!-- 语言图标 -->
+                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+                <div class="btn-text">中/英</div>
+                <span class="key-hint">Z</span>
+            </button>
+
+            <button class="big-btn btn-func focusable" id="btn-mode" tabindex="0" title="切换句子/单词模式">
+                <!-- 模式图标 -->
+                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                <div class="btn-text">模式</div>
+                <span class="key-hint">X</span>
+            </button>
+
+            <button class="big-btn btn-func focusable" id="btn-hide" tabindex="0" title="显示/隐藏课文">
+                <!-- 显隐图标 -->
+                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                <div class="btn-text">显隐</div>
+                <span class="key-hint">C</span>
+            </button>
+            
+            <button class="big-btn btn-settings focusable" id="btn-settings" tabindex="0" title="设置">
+                <!-- 设置图标 -->
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L4.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <div class="btn-text">设置</div>
+                <span class="key-hint">Esc</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 快捷键帮助面板 -->
+    <div class="sidebar-overlay" id="help-overlay"></div>
+    <div class="help-modal" id="help-modal">
+        <div class="help-header">
+            <span>⌨️ 键盘快捷键指南</span>
+            <button style="background:none;border:none;font-size:1.5rem;cursor:pointer;" onclick="toggleHelp()">×</button>
+        </div>
+        <div class="help-grid">
+            <div class="help-item"><span>播放下一句</span><span class="kbd">空格 / Enter</span></div>
+            <div class="help-item"><span>播放上一句</span><span class="kbd">Bksp / ←</span></div>
+            <div class="help-item"><span>回到首句</span><span class="kbd">Home</span></div>
+            <div class="help-item"><span>重读当前句</span><span class="kbd">R</span></div>
+            <div class="help-item"><span>切换 中/英</span><span class="kbd">Z</span></div>
+            <div class="help-item"><span>切换 句/词</span><span class="kbd">X</span></div>
+            <div class="help-item"><span>隐藏/显示</span><span class="kbd">C</span></div>
+            <div class="help-item"><span>打开目录</span><span class="kbd">M</span></div>
+            <div class="help-item"><span>打开设置</span><span class="kbd">ESC</span></div>
+            <div class="help-item"><span>调节/选择</span><span class="kbd">↑ ↓ ← →</span></div>
+        </div>
+    </div>
+
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settings-panel">
+        <div class="setting-row">
+            <div class="setting-label">
+                <span>⌨️ 键盘快捷键</span>
+                <label class="switch">
+                    <input type="checkbox" id="check-keyboard" class="focusable" tabindex="0" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div style="font-size:0.9rem; color:#777;">按 <span class="kbd" style="font-size:0.9rem">P</span> 查看所有快捷键</div>
+        </div>
+        <div class="setting-row">
+            <div class="setting-label">🗣️ 朗读声音 (Voice)</div>
+            <select id="voice-select" class="focusable" tabindex="0"></select>
+        </div>
+        <div class="setting-row" id="row-speed">
+            <div class="setting-label">🚀 语速 (Speed)</div>
+            <div class="setting-controls">
+                <button class="ctrl-btn" id="btn-speed-down">－</button>
+                <span class="value-display" id="disp-speed">0.9</span>
+                <button class="ctrl-btn" id="btn-speed-up">＋</button>
+            </div>
+        </div>
+        <div class="setting-row" id="row-size">
+            <div class="setting-label">🔠 字号 (Size)</div>
+            <div class="setting-controls">
+                <button class="ctrl-btn" id="btn-size-down">小</button>
+                <span class="value-display" id="disp-size">60</span>
+                <button class="ctrl-btn" id="btn-size-up">大</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>📚 文章列表</span>
+            <button style="background:none;border:none;color:white;font-size:2rem;" id="btn-close-sidebar" class="focusable" tabindex="0">×</button>
+        </div>
+        <ul class="article-list" id="article-list"></ul>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const articles = [
+             {
+                id: 1,
+                titleEn: "An Introduction to Yuan Longping",
+                titleCn: "袁隆平简介",
+                contentEn: `<p class="s-box"><span class="p">Yuan LongPing was born in 1930</span> <span class="p">and died on May 22, 2021.</span> <span class="p">In the 1960s,</span> <span class="p">China had a serious food shortage.</span> <span class="p">To tackle this crisis,</span> <span class="p">Yuan LongPing overcame enormous difficulties</span> <span class="p">and finally succeeded in developing super hybrid rice.</span> <span class="p">He was known as the father of super hybrid rice</span> <span class="p">and devoted his life to studying rice.</span> <span class="p">He solved the hunger in China</span> <span class="p">and many countries in the world.</span> <span class="p">For his contributions,</span> <span class="p">he received many national</span> <span class="p">and international awards in his lifetime.</span> <span class="p">He is a hardworking and determined person</span> <span class="p">whom people love and respect.</span> <span class="p">Yuan LongPing is considered a national hero.</span> <span class="p">His deeds set a brilliant example</span> <span class="p">for future generations.</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">袁隆平生于1930年</span> <span class="p">逝世于2021年5月22日。</span> <span class="p">在20世纪60年代，</span> <span class="p">中国面临严重的粮食短缺。</span> <span class="p">为了解决这一危机，</span> <span class="p">袁隆平克服了巨大的困难，</span> <span class="p">最终成功研发出了杂交水稻。</span> <span class="p">他被称为杂交水稻之父，</span> <span class="p">并毕生致力于水稻研究。</span> <span class="p">他解决了中国</span> <span class="p">以及世界上许多国家的饥饿问题。</span> <span class="p">因为他的贡献，</span> <span class="p">他一生中获得了许多国家级</span> <span class="p">和国际级的奖项。</span> <span class="p">他是一位勤奋且意志坚定的人，</span> <span class="p">深受人们的爱戴和尊敬。</span> <span class="p">袁隆平被视为民族英雄。</span> <span class="p">他的事迹树立了光辉的榜样，</span> <span class="p">激励着后人。</span></p>`
+            },
+            {
+                id: 2,
+                titleEn: "Introduction to Chimelong Ocean Kingdom",
+                titleCn: "长隆海洋王国简介",
+                contentEn: `<p class="s-box"><span class="p">Located in the south of Hengqin, Zhuhai,</span> <span class="p">Chimelong Ocean Kingdom</span> <span class="p">is a world-class ocean theme park.</span> <span class="p">The park features the world’s largest</span> <span class="p">Whale Shark Aquarium,</span> <span class="p">where you can see up to 20,000 fish.</span> <span class="p">There are also enjoyable dolphin and sea lion shows,</span> <span class="p">and adorable animals like polar bears.</span> <span class="p">For adventure lovers,</span> <span class="p">the park offers exciting rides</span> <span class="p">such as pirate-themed water fight</span> <span class="p">and roller coasters.</span> <span class="p">At night,</span> <span class="p">don’t miss the splendid light parade and fireworks.</span> <span class="p">The park is easily accessible</span> <span class="p">by public transport or self-driving.</span> <span class="p">Various restaurants</span> <span class="p">are available to satisfy every appetite.</span> <span class="p">It’s a superb place</span> <span class="p">for entertainment and knowledge!</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">位于珠海横琴南部，</span> <span class="p">长隆海洋王国</span> <span class="p">是一个世界级的海洋主题公园。</span> <span class="p">该公园拥有世界上最大的</span> <span class="p">鲸鲨馆，</span> <span class="p">在那里你可以看到多达20,000条鱼。</span> <span class="p">那里还有有趣的海豚和海狮表演，</span> <span class="p">以及像北极熊这样可爱的动物。</span> <span class="p">对于冒险爱好者来说，</span> <span class="p">公园提供刺激的游乐设施，</span> <span class="p">例如海盗主题的水战</span> <span class="p">和过山车。</span> <span class="p">在晚上，</span> <span class="p">不要错过精彩的花车巡游和烟花表演。</span> <span class="p">去往公园非常便利，</span> <span class="p">可以乘坐公共交通或自驾。</span> <span class="p">各式各样的餐厅</span> <span class="p">可以满足各种口味的需求。</span> <span class="p">这是一个极好的地方，</span> <span class="p">集娱乐和知识于一体！</span></p>`
+            },
+            {
+                id: 3,
+                titleEn: "An Introduction to Qian Xuesen",
+                titleCn: "钱学森简介",
+                contentEn: `<p class="s-box"><span class="p">Qian Xuesen was born in Shanghai</span> <span class="p">in 1911.</span> <span class="p">After studying in China,</span> <span class="p">he went to the United States,</span> <span class="p">where he became a rocket technology expert.</span> <span class="p">He returned to China</span> <span class="p">in 1955 and led the development of</span> <span class="p">China’s rocket, missile, and space programs.</span></p><p class="s-box"><span class="p">Despite limited resources,</span> <span class="p">he succeeded in developing</span> <span class="p">China's first rockets and satellites.</span> <span class="p">Under his leadership,</span> <span class="p">China launched its first satellite</span> <span class="p">in 1970. His research</span> <span class="p">also contributed to</span> <span class="p">the Shenzhou rockets.</span></p><p class="s-box"><span class="p">In 2009,</span> <span class="p">the whole country was sadden</span> <span class="p">by Qian’s death.</span></p><p class="s-box"><span class="p">Qian Xuesen is a patriotic and knowlegeable person</span> <span class="p">whom Chinese love and respect.</span> <span class="p">He is honored as</span> <span class="p">"the father of China's aerospace"</span> <span class="p">for his great contributions.</span> <span class="p">His deeds</span> <span class="p">set a brilliant example</span> <span class="p">for future genergations.</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">钱学森出生于上海</span> <span class="p">在1911年。</span> <span class="p">在中国求学后，</span> <span class="p">他去了美国，</span> <span class="p">在那里他成为了一名火箭技术专家。</span> <span class="p">他回到了中国</span> <span class="p">在1955年，并领导了</span> <span class="p">中国的火箭、导弹和太空计划的发展。</span></p><p class="s-box"><span class="p">尽管资源有限，</span> <span class="p">他成功地研制出了</span> <span class="p">中国的第一批火箭和卫星。</span> <span class="p">在他的领导下，</span> <span class="p">中国发射了第一颗卫星</span> <span class="p">在1970年。他的研究</span> <span class="p">也为</span> <span class="p">神舟系列火箭做出了贡献。</span></p><p class="s-box"><span class="p">在2009年，</span> <span class="p">举国悲痛</span> <span class="p">因钱学森的逝世。</span></p><p class="s-box"><span class="p">钱学森是一位爱国且知识渊博的人，</span> <span class="p">深受中国人的爱戴和尊敬。</span> <span class="p">他被誉为</span> <span class="p">“中国航天之父”</span> <span class="p">因为他的巨大贡献。</span> <span class="p">他的事迹</span> <span class="p">树立了光辉的榜样</span> <span class="p">为后代。</span></p>`
+            },
+            {
+                id: 4,
+                titleEn: "Introduction to Tu Youyou",
+                titleCn: "屠呦呦简介",
+                contentEn: `<p class="s-box"><span class="p">Tu Youyou was born in 1930 in Ningbo.</span> <span class="p">In 1955,</span> <span class="p">she graduated from Peking University Medical School.</span> <span class="p">Then, she learned traditional Chinese medicine</span> <span class="p">for two and a half years.</span> <span class="p">In the 1960s,</span> <span class="p">malaria was a serious problem.</span> <span class="p">In 1969,</span> <span class="p">Tu Youyou led a team</span> <span class="p">to find a way to treat it.</span> <span class="p">They read many old Chinese medical books</span> <span class="p">and did hundreds of tests.</span> <span class="p">Finally,</span> <span class="p">in 1972,</span> <span class="p">her team found artemisinin</span> <span class="p">which can treat malaria well.</span> <span class="p">Tu made remarkable achievements</span> <span class="p">in the field of Chinese medicine.</span> <span class="p">First,</span> <span class="p">the discovery of artemisinin</span> <span class="p">has saved hundreds of thousands of lives.</span> <span class="p">What’s more,</span> <span class="p">she won the Nobel Prize</span> <span class="p">in 2015</span> <span class="p">and was the first Chinese scientist</span> <span class="p">to get this prize in this field.</span> <span class="p">She is a committed and patient person</span> <span class="p">whom Chinese love and respect.</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">屠呦呦1930年出生于宁波。</span> <span class="p">1955年，</span> <span class="p">她毕业于北京大学医学院。</span> <span class="p">之后，她学习了中医药</span> <span class="p">两年半的时间。</span> <span class="p">在20世纪60年代，</span> <span class="p">疟疾是一个严重的问题。</span> <span class="p">1969年，</span> <span class="p">屠呦呦带领一个团队</span> <span class="p">去寻找治疗它的方法。</span> <span class="p">他们查阅了许多古老的中医书籍，</span> <span class="p">并进行了数百次实验。</span> <span class="p">终于，</span> <span class="p">在1972年，</span> <span class="p">她的团队发现了青蒿素，</span> <span class="p">它可以很好地治疗疟疾。</span> <span class="p">屠呦呦取得了非凡的成就</span> <span class="p">在中医药领域。</span> <span class="p">首先，</span> <span class="p">青蒿素的发现</span> <span class="p">挽救了成千上万人的生命。</span> <span class="p">此外，</span> <span class="p">她获得了诺贝尔奖</span> <span class="p">在2015年，</span> <span class="p">并且是第一位中国科学家</span> <span class="p">获得该领域的这一奖项。</span> <span class="p">她是一位执着且耐心的人，</span> <span class="p">深受中国人的爱戴和尊敬。</span></p>`
+            },
+            {
+                id: 5,
+                titleEn: "Changes Caused by Technology",
+                titleCn: "科技带来的变化",
+                contentEn: `<p class="s-box"><span class="p">With the development of technology,</span> <span class="p">our daily lives have changed.</span> <span class="p">We now use remote controls</span> <span class="p">to switch on appliances like air conditioners,</span> <span class="p">making everything more automatic and efficient.</span> <span class="p">Homes use integrated systems</span> <span class="p">with sensors to keep us secure.</span> <span class="p">They can detect abnormal events</span> <span class="p">such as gas leaks,</span> <span class="p">helping avoid critical dangers.</span> <span class="p">However,</span> <span class="p">each coin has two sides.</span> <span class="p">These innovations also raise questions.</span> <span class="p">Some people oppose new tech like AI,</span> <span class="p">worry that jobs may cease to exist.</span> <span class="p">Nevertheless,</span> <span class="p">technology helps us predict problems</span> <span class="p">and improve security.</span> <span class="p">It also helps us keep in touch</span> <span class="p">more easily.</span> <span class="p">In short,</span> <span class="p">technology brings both benefits and challenges.</span> <span class="p">We should use it wisely.</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">随着科技的发展，</span> <span class="p">我们的日常生活发生了变化。</span> <span class="p">我们现在使用遥控器</span> <span class="p">来开启像空调这样的电器，</span> <span class="p">使一切变得更加自动化和高效。</span> <span class="p">家庭使用集成系统</span> <span class="p">配备传感器来保障我们的安全。</span> <span class="p">它们可以检测异常事件</span> <span class="p">例如煤气泄漏，</span> <span class="p">帮助避免重大危险。</span> <span class="p">然而，</span> <span class="p">硬币都有两面。</span> <span class="p">这些创新也引发了问题。</span> <span class="p">有些人反对像AI这样的新技术，</span> <span class="p">担心工作可能会消失。</span> <span class="p">尽管如此，</span> <span class="p">科技帮助我们预测问题</span> <span class="p">并提高安全性。</span> <span class="p">它也帮助我们保持联系</span> <span class="p">更加容易。</span> <span class="p">简而言之，</span> <span class="p">科技带来了利益也带来了挑战。</span> <span class="p">我们应该明智地使用它。</span></p>`
+            },
+            {
+                id: 6,
+                titleEn: "Body Language in Our Life",
+                titleCn: "生活中的肢体语言",
+                contentEn: `<p class="s-box"><span class="p">Body language plays a vital role</span> <span class="p">in our daily interactions</span> <span class="p">and varies from culture to culture.</span> <span class="p">For example,</span> <span class="p">in many Middle Eastern countries,</span> <span class="p">eye contact isn't approved.</span> <span class="p">In Japan,</span> <span class="p">people interpret the "ok" gesture as money.</span> <span class="p">In France,</span> <span class="p">it means zero.</span> <span class="p">In Brazil and Germany,</span> <span class="p">it is impolite.</span> <span class="p">By contrast,</span> <span class="p">a smile can break down barriers everywhere.</span> <span class="p">In our life,</span> <span class="p">we can make inferences from people's body language.</span> <span class="p">When someone straightens up,</span> <span class="p">they show confidence.</span> <span class="p">When someone slumps,</span> <span class="p">it may imply they are tired or sad.</span> <span class="p">Even a slight movement</span> <span class="p">can reveal their feelings.</span> <span class="p">Ultimately,</span> <span class="p">it's important to use appropriate body language</span> <span class="p">in different situations, which helps us avoid conflict</span> <span class="p">and communicate better with others.</span></p>`,
+                contentCn: `<p class="s-box"><span class="p">肢体语言起着至关重要的作用</span> <span class="p">在我们的日常交往中，</span> <span class="p">并且因文化而异。</span> <span class="p">例如，</span> <span class="p">在许多中东国家，</span> <span class="p">眼神接触是不被认可的。</span> <span class="p">在日本，</span> <span class="p">人们把“OK”手势理解为钱。</span> <span class="p">在法国，</span> <span class="p">它意味着零。</span> <span class="p">在巴西和德国，</span> <span class="p">这是不礼貌的。</span> <span class="p">相比之下，</span> <span class="p">微笑可以在任何地方打破隔阂。</span> <span class="p">在我们的生活中，</span> <span class="p">我们可以从人们的肢体语言中做出推断。</span> <span class="p">当某人挺直腰板时，</span> <span class="p">他们表现出自信。</span> <span class="p">当某人无精打采时，</span> <span class="p">这可能意味着他们累了或伤心。</span> <span class="p">即使是轻微的动作</span> <span class="p">也能流露他们的感情。</span> <span class="p">最终，</span> <span class="p">使用得体的肢体语言很重要</span> <span class="p">在不同的场合，这有助于我们避免冲突</span> <span class="p">并更好地与他人交流。</span></p>`
+            }
+        ];
+
+        const state = {
+            speed: 0.9, fontSize: 60, lang: 'en', mode: 'sentence',
+            currentArticleId: 1, lastPlayedIndex: -1, keyboardEnabled: true,
+            sidebarOpen: false, settingsOpen: false, settingsFocusIndex: 0,
+            voiceEn: null, voiceCn: null
+        };
+
+        const synth = window.speechSynthesis;
+        const els = {
+            viewport: document.getElementById('viewport'), content: document.getElementById('content-area'),
+            sidebar: document.getElementById('sidebar'), overlay: document.getElementById('overlay'),
+            articleList: document.getElementById('article-list'), settingsPanel: document.getElementById('settings-panel'),
+            btnMenu: document.getElementById('btn-menu'), btnSettings: document.getElementById('btn-settings'),
+            btnCloseSidebar: document.getElementById('btn-close-sidebar'),
+            btnSpeedUp: document.getElementById('btn-speed-up'), btnSpeedDown: document.getElementById('btn-speed-down'),
+            btnSizeUp: document.getElementById('btn-size-up'), btnSizeDown: document.getElementById('btn-size-down'),
+            btnHide: document.getElementById('btn-hide'),
+            btnNext: document.getElementById('btn-next'), btnPrev: document.getElementById('btn-prev'), btnReplay: document.getElementById('btn-replay'), btnStart: document.getElementById('btn-start'),
+            btnLang: document.getElementById('btn-lang'), btnMode: document.getElementById('btn-mode'),
+            dispSpeed: document.getElementById('disp-speed'), dispSize: document.getElementById('disp-size'),
+            voiceSelect: document.getElementById('voice-select'), checkKeyboard: document.getElementById('check-keyboard'),
+            helpModal: document.getElementById('help-modal'), helpOverlay: document.getElementById('help-overlay'),
+            settingRows: [document.getElementById('check-keyboard'), document.getElementById('voice-select'), 'speed', 'size']
+        };
+
+        function init() {
+            loadSettings(); renderSidebar(); loadArticle(state.currentArticleId);
+            if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoiceList;
+            populateVoiceList(); els.checkKeyboard.checked = state.keyboardEnabled;
+        }
+
+        function populateVoiceList() {
+            const voices = synth.getVoices(); els.voiceSelect.innerHTML = '';
+            const targetLang = state.lang === 'en' ? 'en' : 'zh';
+            voices.forEach(voice => {
+                if(voice.lang.toLowerCase().includes(targetLang)) {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`; option.value = voice.name;
+                    els.voiceSelect.appendChild(option);
+                }
+            });
+            const savedVoice = state.lang === 'en' ? state.voiceEn : state.voiceCn;
+            if (savedVoice && Array.from(els.voiceSelect.options).some(o => o.value === savedVoice)) {
+                els.voiceSelect.value = savedVoice;
+            } else {
+                const preferred = state.lang === 'en' 
+                    ? ["Microsoft Libby", "Microsoft Zira", "Google US English"]
+                    : ["Microsoft Xiaoxiao", "Microsoft Huihui", "Google Putonghua"];
+                for (let p of preferred) {
+                    const found = voices.find(v => v.name.includes(p) && v.lang.toLowerCase().includes(targetLang));
+                    if (found) { els.voiceSelect.value = found.name; if (state.lang === 'en') state.voiceEn = found.name; else state.voiceCn = found.name; break; }
+                }
+            }
+        }
+
+        function renderSidebar() {
+            els.articleList.innerHTML = '';
+            articles.forEach((a, index) => {
+                const li = document.createElement('li');
+                li.className = `article-item ${a.id === state.currentArticleId ? 'active' : ''}`;
+                li.innerHTML = `<div>${a.titleEn}</div><div style="font-size:0.9em;color:#666;margin-top:4px;">${a.titleCn}</div>`;
+                li.tabIndex = -1;
+                li.onclick = () => { loadArticle(a.id); toggleSidebar(false); };
+                els.articleList.appendChild(li);
+            });
+        }
+
+        function loadArticle(id) {
+            const article = articles.find(a => a.id === id) || articles[0];
+            state.currentArticleId = article.id;
+            if (!state.switchingLang) state.lastPlayedIndex = -1; state.switchingLang = false;
+            renderSidebar();
+            const title = state.lang === 'en' ? article.titleEn : article.titleCn;
+            const content = state.lang === 'en' ? article.contentEn : article.contentCn;
+            els.content.innerHTML = `<h1>${title}</h1>` + content;
+            
+            const isCn = state.lang === 'cn';
+            // 中文模式隐藏 模式/显隐 按钮
+            if (isCn) {
+                els.btnHide.classList.add('d-none');
+                els.btnMode.classList.add('d-none');
+            } else {
+                els.btnHide.classList.remove('d-none');
+                els.btnMode.classList.remove('d-none');
+            }
+            
+            bindClickEvents(); updateStyles();
+            if (state.lastPlayedIndex !== -1) {
+                setTimeout(() => {
+                    const items = getPlayableItems();
+                    if (items[state.lastPlayedIndex]) items[state.lastPlayedIndex].scrollIntoView({ behavior: "auto", block: "center" });
+                }, 100);
+            } else els.viewport.scrollTo(0,0);
+            saveSettings();
+        }
+
+        function bindClickEvents() {
+            const article = articles.find(a => a.id === state.currentArticleId);
+            const title = state.lang === 'en' ? article.titleEn : article.titleCn;
+            const content = state.lang === 'en' ? article.contentEn : article.contentCn;
+            els.content.innerHTML = `<h1>${title}</h1>` + content;
+            
+            if(state.mode === 'sentence' || state.lang === 'cn') {
+                Array.from(els.content.querySelectorAll('.p')).forEach((span, index) => {
+                    span.className = 'playable';
+                    span.onclick = (e) => { e.stopPropagation(); state.lastPlayedIndex = index; playText(span); };
+                });
+            } else {
+                 els.content.querySelectorAll('.p').forEach(span => {
+                    const text = span.textContent;
+                    const words = text.match(/[\w'-]+|[.,!?;"]/g) || [];
+                    span.innerHTML = words.map(w => /[\w'-]+/.test(w) ? `<span class="playable-word">${w}</span>` : w).join(' ');
+                    span.className = 'p-broken';
+                });
+                Array.from(els.content.querySelectorAll('.playable-word')).forEach((w, index) => {
+                    w.onclick = (e) => { e.stopPropagation(); state.lastPlayedIndex = index; playText(w); };
+                });
+            }
+            updateStyles();
+        }
+
+        function getPlayableItems() { return Array.from(els.content.querySelectorAll('.playable, .playable-word')); }
+        function playNext() {
+            const all = getPlayableItems(); if (all.length === 0) return;
+            let next = state.lastPlayedIndex + 1; if (next >= all.length) next = 0;
+            state.lastPlayedIndex = next; playText(all[next]);
+        }
+        function playPrev() {
+            const all = getPlayableItems(); if (all.length === 0) return;
+            let prev = state.lastPlayedIndex - 1; if (prev < 0) prev = 0;
+            state.lastPlayedIndex = prev; playText(all[prev]);
+        }
+        function playStart() {
+            const all = getPlayableItems(); if (all.length === 0) return;
+            state.lastPlayedIndex = 0; playText(all[0]);
+        }
+        function playReplay() {
+            const all = getPlayableItems(); if (all.length === 0) return;
+            let curr = state.lastPlayedIndex < 0 ? 0 : state.lastPlayedIndex;
+            state.lastPlayedIndex = curr; playText(all[curr]);
+        }
+
+        function playText(targetEl) {
+            stopSpeech();
+            document.querySelectorAll('.playing').forEach(el => el.classList.remove('playing'));
+            targetEl.classList.add('playing');
+            targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            const text = targetEl.textContent;
+            const u = new SpeechSynthesisUtterance(text);
+            const voiceObj = synth.getVoices().find(v => v.name === els.voiceSelect.value);
+            if (voiceObj) u.voice = voiceObj;
+            u.rate = state.speed;
+            u.onend = () => targetEl.classList.remove('playing');
+            synth.speak(u);
+        }
+
+        function stopSpeech() { if (synth.speaking) synth.cancel(); }
+        function toggleLang() { state.switchingLang = true; state.lang = state.lang === 'en' ? 'cn' : 'en'; populateVoiceList(); loadArticle(state.currentArticleId); }
+        function toggleHelp() { 
+            const isActive = els.helpModal.classList.contains('active');
+            if(isActive) { els.helpModal.classList.remove('active'); els.helpOverlay.classList.remove('active'); }
+            else { els.helpModal.classList.add('active'); els.helpOverlay.classList.add('active'); }
+        }
+
+        function updateStyles() {
+            const h1 = els.content.querySelector('h1'); if(h1) h1.style.fontSize = (state.fontSize * 1.2) + 'px';
+            els.content.querySelectorAll('p').forEach(p => p.style.fontSize = state.fontSize + 'px');
+            els.dispSize.textContent = state.fontSize; els.dispSpeed.textContent = state.speed.toFixed(1);
+        }
+        function changeSpeed(delta) {
+            let newSpeed = parseFloat((state.speed + delta).toFixed(1));
+            if (newSpeed < 0.5) newSpeed = 0.5; if (newSpeed > 2.0) newSpeed = 2.0;
+            state.speed = newSpeed; updateStyles(); saveSettings();
+        }
+        function changeSize(delta) {
+            let newSize = state.fontSize + delta;
+            if (newSize < 24) newSize = 24; if (newSize > 120) newSize = 120;
+            state.fontSize = newSize; updateStyles(); saveSettings();
+        }
+        function toggleMode() {
+            if(state.lang === 'cn') return;
+            state.mode = state.mode === 'sentence' ? 'word' : 'sentence';
+            state.lastPlayedIndex = -1; bindClickEvents();
+        }
+        function toggleHide() {
+            if(state.lang === 'cn') return;
+            const children = els.content.children;
+            let isHidden = children.length > 1 ? children[1].style.visibility === 'hidden' : false;
+            for(let i=1; i<children.length; i++) children[i].style.visibility = isHidden ? 'visible' : 'hidden';
+        }
+        function toggleSidebar(show) {
+            if (show) {
+                els.sidebar.classList.add('open'); els.overlay.classList.add('active');
+                els.settingsPanel.classList.remove('open'); state.sidebarOpen = true; state.settingsOpen = false;
+                setTimeout(() => { const first = els.articleList.querySelector('.article-item'); if(first) first.focus(); }, 100);
+            } else {
+                els.sidebar.classList.remove('open'); els.overlay.classList.remove('active');
+                state.sidebarOpen = false; els.btnMenu.focus();
+            }
+        }
+        function toggleSettings() {
+            state.settingsOpen = !state.settingsOpen;
+            if (state.settingsOpen) {
+                els.settingsPanel.classList.add('open'); toggleSidebar(false);
+                state.settingsFocusIndex = 0; highlightSettingsRow();
+            } else { els.settingsPanel.classList.remove('open'); els.btnSettings.focus(); }
+        }
+        function highlightSettingsRow() {
+            document.querySelectorAll('.setting-row').forEach(r => r.classList.remove('focused'));
+            const rows = document.querySelectorAll('.setting-row');
+            if(rows[state.settingsFocusIndex]) {
+                rows[state.settingsFocusIndex].classList.add('focused');
+                const interactive = els.settingRows[state.settingsFocusIndex];
+                if(interactive && typeof interactive !== 'string') interactive.focus();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!state.keyboardEnabled) return;
+
+            if(e.key === 'p' || e.key === 'P') { e.preventDefault(); toggleHelp(); return; }
+
+            if (state.sidebarOpen) {
+                const items = Array.from(document.querySelectorAll('.article-item'));
+                const current = document.activeElement; const currentIndex = items.indexOf(current);
+                if (e.key === 'ArrowDown') { e.preventDefault(); const next = (currentIndex + 1) % items.length; items[next].focus(); } 
+                else if (e.key === 'ArrowUp') { e.preventDefault(); const prev = (currentIndex - 1 + items.length) % items.length; items[prev].focus(); } 
+                else if (e.key === 'Enter') { if (currentIndex !== -1) items[currentIndex].click(); } 
+                else if (e.key === 'Escape' || e.key === 'ArrowRight') { toggleSidebar(false); }
+                return;
+            }
+            if (state.settingsOpen) {
+                if (e.key === 'Escape') { toggleSettings(); return; }
+                if (e.key === 'ArrowDown') { e.preventDefault(); state.settingsFocusIndex = (state.settingsFocusIndex + 1) % 4; highlightSettingsRow(); } 
+                else if (e.key === 'ArrowUp') { e.preventDefault(); state.settingsFocusIndex = (state.settingsFocusIndex - 1 + 4) % 4; highlightSettingsRow(); } 
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    const currentItem = els.settingRows[state.settingsFocusIndex];
+                    const delta = e.key === 'ArrowRight' ? 1 : -1;
+                    if (currentItem === 'speed') changeSpeed(delta * 0.1);
+                    else if (currentItem === 'size') changeSize(delta * 4);
+                    else if (currentItem === els.checkKeyboard) { els.checkKeyboard.checked = !els.checkKeyboard.checked; els.checkKeyboard.dispatchEvent(new Event('change')); }
+                }
+                return;
+            }
+            if (e.key === 'Escape') { toggleSettings(); return; }
+            
+            if (e.key === ' ' && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); playNext(); }
+            else if (e.key === 'Backspace') { e.preventDefault(); playPrev(); }
+            else if (e.key === 'Home') { e.preventDefault(); playStart(); }
+            else if (e.key === 'r' || e.key === 'R') { e.preventDefault(); playReplay(); }
+            else if (e.key === 'z' || e.key === 'Z') toggleLang();
+            else if (e.key === 'x' || e.key === 'X') toggleMode();
+            else if (e.key === 'c' || e.key === 'C') toggleHide();
+            else if (e.key === 'm' || e.key === 'M') toggleSidebar(true);
+
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                const focusable = Array.from(document.querySelectorAll('.toolbar .focusable:not(.d-none)'));
+                const current = document.activeElement; let index = focusable.indexOf(current);
+                if (index === -1) focusable[0].focus();
+                else {
+                    const next = e.key === 'ArrowRight' ? (index + 1) % focusable.length : (index - 1 + focusable.length) % focusable.length;
+                    focusable[next].focus();
+                }
+            }
+            if (e.key === 'ArrowUp') els.viewport.scrollBy(0, -100);
+            if (e.key === 'ArrowDown') els.viewport.scrollBy(0, 100);
+        });
+
+        function saveSettings() {
+            localStorage.setItem('cr_speed', state.speed); localStorage.setItem('cr_size', state.fontSize);
+            localStorage.setItem('cr_article', state.currentArticleId); localStorage.setItem('cr_kb', state.keyboardEnabled);
+            localStorage.setItem('cr_lang', state.lang);
+            if (state.lang === 'en') localStorage.setItem('cr_voice_en', els.voiceSelect.value);
+            else localStorage.setItem('cr_voice_cn', els.voiceSelect.value);
+        }
+        function loadSettings() {
+            const s_speed = localStorage.getItem('cr_speed'); if(s_speed) state.speed = parseFloat(s_speed);
+            const s_size = localStorage.getItem('cr_size'); if(s_size) state.fontSize = parseInt(s_size);
+            const s_article = localStorage.getItem('cr_article'); if(s_article) state.currentArticleId = parseInt(s_article);
+            const s_kb = localStorage.getItem('cr_kb'); if(s_kb !== null) state.keyboardEnabled = (s_kb === 'true');
+            const s_lang = localStorage.getItem('cr_lang'); if(s_lang) state.lang = s_lang;
+            state.voiceEn = localStorage.getItem('cr_voice_en'); state.voiceCn = localStorage.getItem('cr_voice_cn');
+        }
+
+        els.btnMenu.onclick = () => toggleSidebar(true);
+        els.btnCloseSidebar.onclick = () => toggleSidebar(false);
+        els.overlay.onclick = () => toggleSidebar(false);
+        els.btnSettings.onclick = toggleSettings;
+        els.btnSpeedUp.onclick = () => changeSpeed(0.1);
+        els.btnSpeedDown.onclick = () => changeSpeed(-0.1);
+        els.btnSizeUp.onclick = () => changeSize(4);
+        els.btnSizeDown.onclick = () => changeSize(-4);
+        els.btnHide.onclick = toggleHide;
+        els.btnStart.onclick = playStart;
+        els.btnNext.onclick = playNext;
+        els.btnPrev.onclick = playPrev;
+        els.btnReplay.onclick = playReplay;
+        els.btnLang.onclick = toggleLang;
+        els.btnMode.onclick = toggleMode;
+
+        els.voiceSelect.onchange = () => { if (state.lang === 'en') state.voiceEn = els.voiceSelect.value; else state.voiceCn = els.voiceSelect.value; saveSettings(); };
+        els.checkKeyboard.onchange = (e) => { state.keyboardEnabled = e.target.checked; saveSettings(); };
+        els.viewport.onclick = () => { if(state.settingsOpen) toggleSettings(); };
+        els.helpOverlay.onclick = toggleHelp;
+
+        init();
+    </script>
+</body>
+</html>
